@@ -21,8 +21,31 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 // import { CirclePlus, Search } from "lucide-react";
 import { Search01Icon } from "hugeicons-react";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, Edit, Search } from "lucide-react";
 import Link from "next/link";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import InviteEmployer from "./invite";
+import InviterEmployer from "./invite";
 
 interface EmployerProps {
   employers: Employer[];
@@ -58,16 +81,6 @@ export default function EmployerTable({ employers }: EmployerProps) {
       {
         accessorKey: "telephone",
         header: "Téléphone",
-        cell: (info) => info.getValue(),
-      },
-      {
-        accessorKey: "Poste",
-        header: "Poste",
-        cell: (info) => info.getValue(),
-      },
-      {
-        accessorKey: "Entreprise",
-        header: "Entreprise",
         cell: (info) => info.getValue(),
       },
       {
@@ -124,133 +137,56 @@ export default function EmployerTable({ employers }: EmployerProps) {
             </span>
           </div>
         </div>
-        <Link href={"/admin/employer/create"} passHref legacyBehavior>
-          <Button className="bg-bleu hover:bg-blue-700 text-white px-6 py-2 rounded-md w-fit">
-            Créer une employer
-            <CirclePlus />
-          </Button>
-        </Link>
+
+        {/* <Dialog>
+          <DialogTrigger asChild>
+            <DropdownMenuItem
+              onSelect={(e) => e.preventDefault()} // Empêche la fermeture du dropdown
+              className="cursor-pointer flex items-center"
+            >
+              <Edit className="mr-2 h-4 w-4 text-gray-600" />
+              Modifier le profil
+            </DropdownMenuItem>
+          </DialogTrigger>
+          <InviteEmployer />
+        </Dialog> */}
+        <Dialog>
+          <form>
+            <InviterEmployer triggerType="button" />
+          </form>
+        </Dialog>
       </div>
 
       <div className="flex flex-row w-full gap-4">
         {/* filtre */}
         <div className="flex flex-row w-full gap-4">
-          <div className="relative">
-            <select
-              id="Nom"
-              aria-label="Trier par nom"
-              className={`appearance-none border rounded-md w-full px-5 py-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white cursor-pointer`}
-            >
-              <option value="nomAZ">Nom ( A - Z )</option>
-              <option value="nomZA">Nom ( Z - A )</option>
-              {/* <SeparatorHorizontal /> */}
-              <option value="ASC">Date Creation (Asc)</option>
-              <option value="Desc">Date Creation (Desc)</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
-              {/* Icône de flèche pour le select */}
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 12a1 1 0 0 1-.707-.293l-4-4a1 1 0 1 1 1.414-1.414L10 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4A1 1 0 0 1 10 12z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <div className="relative">
-            <select
-              id="Role"
-              aria-label="Filtrer par role"
-              title="Filtrer par role"
-              className={`appearance-none border rounded-md w-full pl-5 pr-10 py-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white cursor-pointer`}
-              defaultValue="Tous" // Assurez-vous que cette valeur correspond à l'option désactivée
-            >
-              <option value="Tous">Tous les rôles</option>
-              <option value="Gestionaire">Gestionaire</option>
-              <option value="Employer">Employer</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
-              {/* Icône de flèche pour le select */}
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 12a1 1 0 0 1-.707-.293l-4-4a1 1 0 1 1 1.414-1.414L10 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4A1 1 0 0 1 10 12z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <div className="relative">
-            <select
-              id="domain"
-              aria-label="Filtrer par poste"
-              title="Filtrer par poste"
-              className={`appearance-none border rounded-md w-full pl-5 pr-10 py-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white cursor-pointer`}
-              defaultValue="" // Assurez-vous que cette valeur correspond à l'option désactivée
-            >
-              <option value="ToutPoste">Tous les postes</option>
-              <option value="Poste1">Poste 1</option>
-              <option value="Poste2">Poste 2</option>
-              <option value="education">Éducation</option>
-              <option value="health">Santé</option>
-              <option value="finance">Finance</option>
-              <option value="retail">Retail</option>
-              <option value="manufacturing">Fabrication</option>
-              <option value="other">Autre</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
-              {/* Icône de flèche pour le select */}
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 12a1 1 0 0 1-.707-.293l-4-4a1 1 0 1 1 1.414-1.414L10 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4A1 1 0 0 1 10 12z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Trier par nom" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="nomAZ">Nom ( A - Z )</SelectItem>
+              <SelectItem value="nomZA">Nom ( Z - A )</SelectItem>
+              <SelectItem value="ASC">Date Creation (Asc)</SelectItem>
+              <SelectItem value="Desc">Date Creation (Desc)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div>
-          <div className="flex flex-row items-center px-2 rounded-md border border-gray w-full focus-within:shadow-md focus-within:border-blue-500 transition-all duration-200">
-            <Search01Icon color="#e5e5e5" size={24} />
-            <input
-              type="search"
-              name="search"
-              placeholder="Recherche un employer"
-              className="py-2 px-4 w-full outline-none"
+          {/* Barre de recherche globale */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Rechercher par nom"
+              value={globalFilter ?? ""}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              className="pl-10 py-2 xl:w-sm 2xl:w-xl 2xl:border-0 focus-visible:border-0"
             />
           </div>
-          {/* Barre de recherche globale */}
-          {/* <div className="flex items-center border border-gray-500 py-1 rounded-md">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Rechercher par nom"
-                value={globalFilter ?? ""}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                className="pl-10 py-2 xl:w-sm 2xl:w-xl 2xl:border-0 focus-visible:border-0 focus-visible:ring-0 focus-visible:outline-none"
-              />
-            </div>
-          </div> */}
         </div>
       </div>
       <div className="flex flex-col justify-between h-full">
-        <div className="flex flex-col p-2 border border-bleu-ciel rounded-4xl">
+        <div className="flex flex-col p-2 border border-bleu-ciel rounded-xl">
           {/* Tableau */}
           <table className="w-full text-left border-collapse">
             <thead className="bg-bleu-ciel">
@@ -261,9 +197,9 @@ export default function EmployerTable({ employers }: EmployerProps) {
                     let thClass = "py-2 px-4 cursor-pointer select-none";
 
                     if (header.column.id === "id") {
-                      thClass += " rounded-l-full";
+                      thClass += " rounded-l-sm";
                     } else if (header.column.id === "actions") {
-                      thClass += " rounded-r-full";
+                      thClass += " rounded-r-sm";
                     }
 
                     return (

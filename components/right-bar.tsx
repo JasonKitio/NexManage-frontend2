@@ -15,6 +15,7 @@ import {
 import TaskManagementPage from "./taches/TaskManagementPage";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import InviteEmployer from "@/app/(dashboard)/admin/employer/_components/invite";
 const RightBar = ({
   onToggleKanban,
   isKanbanActive,
@@ -173,10 +174,8 @@ const RightBar = ({
                 className="cursor-pointer hover:text-gray"
                 onClick={() => setIsExpanded(false)}
               />
-              <UserAdd01Icon
-                className="cursor-pointer hover:text-gray"
-                size={20}
-              />
+
+              <InviterEmployer triggerType="icon" />
               <WorkHistoryIcon
                 className="cursor-pointer hover:text-gray"
                 size={20}
@@ -241,3 +240,4 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import InviterEmployer from "@/app/(dashboard)/admin/employer/_components/invite";

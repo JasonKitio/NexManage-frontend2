@@ -12,21 +12,28 @@
 // ================================
 
 export enum Role {
-  EMPLOYE = 'EMPLOYE',
-  MANAGER = 'MANAGER',
-  ADMIN = 'ADMIN',
+  EMPLOYE = "EMPLOYE",
+  MANAGER = "MANAGER",
+  ADMIN = "ADMIN",
 }
 
 export enum StatutTache {
-  EN_ATTENTE = 'EN_ATTENTE',
-  EN_COURS = 'EN_COURS',
-  TERMINEE = 'TERMINEE',
+  EN_ATTENTE = "EN_ATTENTE",
+  EN_COURS = "EN_COURS",
+  TERMINEE = "TERMINEE",
+}
+
+export enum StatutContrat {
+  EN_ATTENTE = "EN_ATTENTE",
+  EN_COURS = "EN_COURS",
+  TERMINEE = "TERMINEE",
+  ARRIVEE_TARDIVE = "ARRIVEE-TARDIVE",
 }
 
 export enum StatutConge {
-  EN_ATTENTE = 'EN_ATTENTE',
-  ACCEPTE = 'ACCEPTE',
-  REFUSE = 'REFUSE',
+  EN_ATTENTE = "EN_ATTENTE",
+  ACCEPTE = "ACCEPTE",
+  REFUSE = "REFUSE",
 }
 
 export type Point = {
@@ -34,9 +41,9 @@ export type Point = {
 };
 
 export enum Priorite {
-  BASSE = 'BASSE',
-  MOYENNE = 'MOYENNE',
-  HAUTE = 'HAUTE',
+  BASSE = "BASSE",
+  MOYENNE = "MOYENNE",
+  HAUTE = "HAUTE",
 }
 
 export interface Entreprise {
@@ -103,6 +110,7 @@ export interface Contrat {
   estGabarit: boolean;
   nomGabarit?: string;
   dateCreation: Date;
+  statut: StatutContrat;
   //   equipements: Equipement[];
 }
 

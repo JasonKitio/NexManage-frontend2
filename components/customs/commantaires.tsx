@@ -1,87 +1,205 @@
-import React from 'react';
-import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Paperclip, Send, User2, User2Icon } from 'lucide-react';
-import Image from 'next/image';
-import { Button } from '../ui/button';
-import { MoreHorizontalCircle01Icon } from 'hugeicons-react';
-import { Input } from '../ui/input';
-import { ScrollArea } from '../ui/scroll-area';
+// components/Commantaires.jsx
+"use client"; // If using App Router, mark as client component
+
+import React, { useState } from "react";
+import { ScrollArea } from "../ui/scroll-area";
+import CommentForm from './CommentForm';
+import CommentItem from './CommentItem';
+// import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs for comments
+
+// Make sure you install uuid: npm install uuid
+// And for date-fns: npm install date-fns
+
+// Dummy Data for Comments
+const initialComments = [
+  {
+    id: 'c1',
+    author: 'Alice Martin',
+    authorInitial: 'AM',
+    authorAvatarUrl: null, // Placeholder if you have actual avatar URLs
+    text: 'Ça c\'est fait. Bon travail à l\'équipe !',
+    timestamp: '2025-07-07T10:00:00Z',
+    likes: 15,
+    dislikes: 2,
+    likedByCurrentUser: false,
+    dislikedByCurrentUser: false,
+    replies: [
+      {
+        id: 'r1-1',
+        parentId: 'c1',
+        author: 'Bob Dupont',
+        authorInitial: 'BD',
+        authorAvatarUrl: null,
+        text: 'Merci Alice ! On a mis les bouchées doubles.',
+        timestamp: '2025-07-07T11:30:00Z',
+        likes: 5,
+        dislikes: 0,
+        likedByCurrentUser: false,
+        dislikedByCurrentUser: false,
+        replies: [],
+      },
+      {
+        id: 'r1-2',
+        parentId: 'c1',
+        author: 'Charlie Brown',
+        authorInitial: 'CB',
+        authorAvatarUrl: null,
+        text: 'Super ! Est-ce qu\'on peut avoir un point sur le next step ?',
+        timestamp: '2025-07-07T12:00:00Z',
+        likes: 8,
+        dislikes: 1,
+        likedByCurrentUser: false,
+        dislikedByCurrentUser: false,
+        replies: [
+            {
+                id: 'r1-2-1',
+                parentId: 'r1-2',
+                author: 'Alice Martin',
+                authorInitial: 'AM',
+                authorAvatarUrl: null,
+                text: 'Oui Charlie, je prépare ça pour demain matin.',
+                timestamp: '2025-07-07T14:00:00Z',
+                likes: 2,
+                dislikes: 0,
+                likedByCurrentUser: false,
+                dislikedByCurrentUser: false,
+                replies: [],
+            }
+        ],
+      },
+    ],
+  },
+  {
+    id: 'c2',
+    author: 'David S.',
+    authorInitial: 'DS',
+    authorAvatarUrl: null,
+    text: 'Je confirme, c\'est validé de mon côté.',
+    timestamp: '2025-07-07T15:45:00Z',
+    likes: 10,
+    dislikes: 0,
+    likedByCurrentUser: false,
+    dislikedByCurrentUser: false,
+    replies: [],
+  },
+];
+
+const currentUser = {
+  id: 'user123',
+  name: 'Tsague Inares',
+  initial: 'TI',
+  avatarUrl: null,
+};
 
 const Commantaires = () => {
+  const [comments, setComments] = useState(initialComments);
+
+  // Helper to find and update a comment/reply by ID
+  const updateCommentById = (commentList, id, updateFn) => {
+    return commentList.map(comment => {
+      if (comment.id === id) {
+        return updateFn(comment);
+      }
+      if (comment.replies && comment.replies.length > 0) {
+        return {
+          ...comment,
+          replies: updateCommentById(comment.replies, id, updateFn),
+        };
+      }
+      return comment;
+    });
+  };
+
+  const handleNewComment = (text, parentId = null) => {
+    const newComment = {
+      id: uuidv4(),
+      author: currentUser.name,
+      authorInitial: currentUser.initial,
+      authorAvatarUrl: currentUser.avatarUrl,
+      text,
+      timestamp: new Date().toISOString(),
+      likes: 0,
+      dislikes: 0,
+      likedByCurrentUser: false,
+      dislikedByCurrentUser: false,
+      replies: [],
+      parentId: parentId, // Set parentId for replies
+    };
+
+    if (parentId) {
+      setComments(prevComments =>
+        updateCommentById(prevComments, parentId, (commentToUpdate) => ({
+          ...commentToUpdate,
+          replies: [...commentToUpdate.replies, newComment],
+        }))
+      );
+    } else {
+      setComments(prevComments => [newComment, ...prevComments]); // Add new comments at the top
+    }
+  };
+
+  const handleLike = (commentId) => {
+    setComments(prevComments =>
+      updateCommentById(prevComments, commentId, (comment) => {
+        const newLikes = comment.likedByCurrentUser ? comment.likes - 1 : comment.likes + 1;
+        const newDislikes = comment.dislikedByCurrentUser ? comment.dislikes - 1 : comment.dislikes;
+
+        return {
+          ...comment,
+          likes: newLikes,
+          dislikes: newDislikes, // If previously disliked, remove dislike
+          likedByCurrentUser: !comment.likedByCurrentUser,
+          dislikedByCurrentUser: false, // Ensure it's not disliked if liked
+        };
+      })
+    );
+  };
+
+  const handleDislike = (commentId) => {
+    setComments(prevComments =>
+      updateCommentById(prevComments, commentId, (comment) => {
+        const newDislikes = comment.dislikedByCurrentUser ? comment.dislikes - 1 : comment.dislikes + 1;
+        const newLikes = comment.likedByCurrentUser ? comment.likes - 1 : comment.likes;
+
+        return {
+          ...comment,
+          dislikes: newDislikes,
+          likes: newLikes, // If previously liked, remove like
+          dislikedByCurrentUser: !comment.dislikedByCurrentUser,
+          likedByCurrentUser: false, // Ensure it's not liked if disliked
+        };
+      })
+    );
+  };
+
   return (
-    <div>
+    <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg"> {/* Container for the whole comment section */}
+      <h2 className="text-xl font-semibold p-4 border-b">Commentaires</h2>
       {/* Content area */}
-      <ScrollArea className='p-4 space-y-4 min-h-[300px]'>
-        {/* First message with image */}
-        <div className='flex items-start space-x-3'>
-          <Avatar className='h-8 w-8'>
-            <AvatarFallback className='bg-gray-200'>
-              <User2Icon className='h-4 w-4' />
-            </AvatarFallback>
-          </Avatar>
-          <div className='flex-1'>
-            <div className='bg-gray-100 rounded-lg p-2 max-w-xs'>
-              <Image
-                src='https://plus.unsplash.com/premium_vector-1682299692411-5bd547d070c1?q=80&w=881&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-                alt='Construction building'
-                width={200}
-                height={150}
-                className='rounded-md object-cover w-full'
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Status indicator */}
-        <div className='flex justify-end'>
-          <div className='flex items-center space-x-2'>
-            <span className='text-xs text-gray-500'>Vu</span>
-            <Button className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 text-sm rounded-full'>
-              Ça c&apos;est fait
-            </Button>
-            <Avatar className='h-6 w-6'>
-              <AvatarFallback className='bg-gray-200 text-xs'>
-                <User2Icon className='h-3 w-3' />
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
-
-        {/* Second message indicator */}
-        <div className='flex items-center space-x-3'>
-          <Avatar className='h-8 w-8'>
-            <AvatarFallback className='bg-gray-200'>
-              <User2 className='h-4 w-4' />
-            </AvatarFallback>
-          </Avatar>
-          <Button variant='ghost' size='icon' className='h-8 w-8'>
-            <MoreHorizontalCircle01Icon className='h-5 w-5' />
-          </Button>
-        </div>
+      <ScrollArea className="p-4 space-y-4"> {/* Fixed height for scroll area */}
+        {comments.map((comment) => (
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+            onReply={handleNewComment} // Pass handleNewComment as the reply handler
+            onLike={handleLike}
+            onDislike={handleDislike}
+            currentUser={currentUser}
+          />
+        ))}
       </ScrollArea>
-      {/* Input area */}
-      <div className='border-t p-4'>
-        <div className='flex items-center space-x-2'>
-          <div className='flex-1 relative'>
-            <Input placeholder='Envoyer un commantaire' className='pr-10' />
-            <Button
-              variant='ghost'
-              size='icon'
-              className='absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8'
-            >
-              <Paperclip className='h-4 w-4' />
-            </Button>
-          </div>
-          <Button
-            size='icon'
-            className='bg-blue-600 hover:bg-blue-700 h-11 w-11'
-          >
-            <Send className='h-8 w-8' />
-          </Button>
-        </div>
+
+      {/* Main Input area for new comments */}
+      <div className="border-t p-4">
+        <CommentForm
+          placeholder="Ajouter un commentaire..."
+          onCommentSubmit={handleNewComment}
+        />
       </div>
     </div>
   );
 };
 
 export default Commantaires;
+
+  
