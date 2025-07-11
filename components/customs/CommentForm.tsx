@@ -3,11 +3,9 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Paperclip, Send } from "lucide-react";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { User2Icon } from "lucide-react"; // Or User2
 
 interface CommentFormProps {
-  onCommentSubmit: (commentText: string, parentCommentId: string) => {};
+  onCommentSubmit: (commentText: string, parentCommentId: string) => void;
   placeholder: string;
   parentCommentId: string;
   className: string;
@@ -21,7 +19,7 @@ const CommentForm = ({
 }: CommentFormProps) => {
   const [commentText, setCommentText] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (commentText.trim()) {
       onCommentSubmit(commentText, parentCommentId);

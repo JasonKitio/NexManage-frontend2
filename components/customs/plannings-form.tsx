@@ -9,7 +9,6 @@ import Commantaires from "./commantaires";
 import { AddCircleIcon } from "hugeicons-react";
 
 import { Dialog, DialogContent } from "../ui/dialog";
-import { ScrollArea } from "../ui/scroll-area";
 import ContractForm from "./contract-form";
 
 // Ajout des props pour contrôler la modal depuis l'extérieur

@@ -26,7 +26,7 @@ export enum StatutTache {
 export enum StatutContrat {
   EN_ATTENTE = "EN_ATTENTE",
   EN_COURS = "EN_COURS",
-  TERMINEE = "TERMINEE",
+  TERMINE = "TERMINE",
   ARRIVEE_TARDIVE = "ARRIVEE-TARDIVE",
 }
 
@@ -221,6 +221,7 @@ interface pagination {
 // Invitation data
 
 export interface InvitationResponse {
+  result: any;
   nom: string;
   email?: string;
   phone?: string;

@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -137,7 +136,7 @@ export default function InviterEmployer({
                     key={field.id}
                     control={form.control}
                     name={`employers.${index}.nom`}
-                    render={({ field: nomField }) => (
+                    render={() => (
                       <FormItem className="border rounded-lg p-4 flex flex-row gap-4 items-center">
                         <FormField
                           control={form.control}

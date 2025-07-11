@@ -19,7 +19,6 @@ import {
   CursorPointer02Icon,
   Home01Icon,
   Message01Icon,
-  Settings02Icon,
   UserListIcon,
   WorkHistoryIcon,
 } from "hugeicons-react";
@@ -93,8 +92,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        {data.navMain.map((group) => (
-          <SidebarGroup>
+        {data.navMain.map((group, index) => (
+          <SidebarGroup key={index}>
             {/* <SidebarGroupLabel>{group.title}</SidebarGroupLabel> */}
             <SidebarGroupContent>
               <SidebarMenu>

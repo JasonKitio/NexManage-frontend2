@@ -9,13 +9,11 @@ import {
   FilterMailCircleIcon,
   Megaphone02Icon,
   TaskAdd02Icon,
-  UserAdd01Icon,
   WorkHistoryIcon,
 } from "hugeicons-react";
 import TaskManagementPage from "./taches/TaskManagementPage";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import InviteEmployer from "@/app/(dashboard)/admin/employer/_components/invite";
 const RightBar = ({
   onToggleKanban,
   isKanbanActive,

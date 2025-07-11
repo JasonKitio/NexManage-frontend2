@@ -1,37 +1,49 @@
-// components/Commantaires.jsx
-"use client"; // If using App Router, mark as client component
+"use client";
 
 import React, { useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
-import CommentForm from './CommentForm';
-import CommentItem from './CommentItem';
-// import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs for comments
+import CommentForm from "./CommentForm";
+import CommentItem from "./CommentItem";
+import { v4 as uuidv4 } from "uuid";
 
-// Make sure you install uuid: npm install uuid
-// And for date-fns: npm install date-fns
+// Type pour un commentaire (avec récursivité sur replies)
+interface CommentType {
+  id: string;
+  author: string;
+  authorInitial: string;
+  authorAvatarUrl: string | null;
+  text: string;
+  timestamp: string;
+  likes: number;
+  dislikes: number;
+  likedByCurrentUser: boolean;
+  dislikedByCurrentUser: boolean;
+  replies: CommentType[];
+  parentId?: string | null;
+}
 
-// Dummy Data for Comments
-const initialComments = [
+// Données initiales (dummy)
+const initialComments: CommentType[] = [
   {
-    id: 'c1',
-    author: 'Alice Martin',
-    authorInitial: 'AM',
-    authorAvatarUrl: null, // Placeholder if you have actual avatar URLs
-    text: 'Ça c\'est fait. Bon travail à l\'équipe !',
-    timestamp: '2025-07-07T10:00:00Z',
+    id: "c1",
+    author: "Alice Martin",
+    authorInitial: "AM",
+    authorAvatarUrl: null,
+    text: "Ça c'est fait. Bon travail à l'équipe !",
+    timestamp: "2025-07-07T10:00:00Z",
     likes: 15,
     dislikes: 2,
     likedByCurrentUser: false,
     dislikedByCurrentUser: false,
     replies: [
       {
-        id: 'r1-1',
-        parentId: 'c1',
-        author: 'Bob Dupont',
-        authorInitial: 'BD',
+        id: "r1-1",
+        parentId: "c1",
+        author: "Bob Dupont",
+        authorInitial: "BD",
         authorAvatarUrl: null,
-        text: 'Merci Alice ! On a mis les bouchées doubles.',
-        timestamp: '2025-07-07T11:30:00Z',
+        text: "Merci Alice ! On a mis les bouchées doubles.",
+        timestamp: "2025-07-07T11:30:00Z",
         likes: 5,
         dislikes: 0,
         likedByCurrentUser: false,
@@ -39,43 +51,43 @@ const initialComments = [
         replies: [],
       },
       {
-        id: 'r1-2',
-        parentId: 'c1',
-        author: 'Charlie Brown',
-        authorInitial: 'CB',
+        id: "r1-2",
+        parentId: "c1",
+        author: "Charlie Brown",
+        authorInitial: "CB",
         authorAvatarUrl: null,
-        text: 'Super ! Est-ce qu\'on peut avoir un point sur le next step ?',
-        timestamp: '2025-07-07T12:00:00Z',
+        text: "Super ! Est-ce qu'on peut avoir un point sur le next step ?",
+        timestamp: "2025-07-07T12:00:00Z",
         likes: 8,
         dislikes: 1,
         likedByCurrentUser: false,
         dislikedByCurrentUser: false,
         replies: [
-            {
-                id: 'r1-2-1',
-                parentId: 'r1-2',
-                author: 'Alice Martin',
-                authorInitial: 'AM',
-                authorAvatarUrl: null,
-                text: 'Oui Charlie, je prépare ça pour demain matin.',
-                timestamp: '2025-07-07T14:00:00Z',
-                likes: 2,
-                dislikes: 0,
-                likedByCurrentUser: false,
-                dislikedByCurrentUser: false,
-                replies: [],
-            }
+          {
+            id: "r1-2-1",
+            parentId: "r1-2",
+            author: "Alice Martin",
+            authorInitial: "AM",
+            authorAvatarUrl: null,
+            text: "Oui Charlie, je prépare ça pour demain matin.",
+            timestamp: "2025-07-07T14:00:00Z",
+            likes: 2,
+            dislikes: 0,
+            likedByCurrentUser: false,
+            dislikedByCurrentUser: false,
+            replies: [],
+          },
         ],
       },
     ],
   },
   {
-    id: 'c2',
-    author: 'David S.',
-    authorInitial: 'DS',
+    id: "c2",
+    author: "David S.",
+    authorInitial: "DS",
     authorAvatarUrl: null,
-    text: 'Je confirme, c\'est validé de mon côté.',
-    timestamp: '2025-07-07T15:45:00Z',
+    text: "Je confirme, c'est validé de mon côté.",
+    timestamp: "2025-07-07T15:45:00Z",
     likes: 10,
     dislikes: 0,
     likedByCurrentUser: false,
@@ -84,19 +96,24 @@ const initialComments = [
   },
 ];
 
+// Utilisateur courant (dummy)
 const currentUser = {
-  id: 'user123',
-  name: 'Tsague Inares',
-  initial: 'TI',
+  id: "user123",
+  name: "Tsague Inares",
+  initial: "TI",
   avatarUrl: null,
 };
 
-const Commantaires = () => {
-  const [comments, setComments] = useState(initialComments);
+const Commantaires: React.FC = () => {
+  const [comments, setComments] = useState<CommentType[]>(initialComments);
 
-  // Helper to find and update a comment/reply by ID
-  const updateCommentById = (commentList, id, updateFn) => {
-    return commentList.map(comment => {
+  // Fonction typée pour mettre à jour un commentaire par son id
+  const updateCommentById = (
+    commentList: CommentType[],
+    id: string,
+    updateFn: (comment: CommentType) => CommentType
+  ): CommentType[] => {
+    return commentList.map((comment) => {
       if (comment.id === id) {
         return updateFn(comment);
       }
@@ -110,8 +127,9 @@ const Commantaires = () => {
     });
   };
 
-  const handleNewComment = (text, parentId = null) => {
-    const newComment = {
+  // Ajouter un nouveau commentaire ou une réponse
+  const handleNewComment = (text: string, parentId: string | null = null) => {
+    const newComment: CommentType = {
       id: uuidv4(),
       author: currentUser.name,
       authorInitial: currentUser.initial,
@@ -123,23 +141,24 @@ const Commantaires = () => {
       likedByCurrentUser: false,
       dislikedByCurrentUser: false,
       replies: [],
-      parentId: parentId, // Set parentId for replies
+      parentId,
     };
 
     if (parentId) {
-      setComments(prevComments =>
+      setComments((prevComments) =>
         updateCommentById(prevComments, parentId, (commentToUpdate) => ({
           ...commentToUpdate,
           replies: [...commentToUpdate.replies, newComment],
         }))
       );
     } else {
-      setComments(prevComments => [newComment, ...prevComments]); // Add new comments at the top
+      setComments((prevComments) => [newComment, ...prevComments]);
     }
   };
 
-  const handleLike = (commentId) => {
-    setComments(prevComments =>
+  // Gestion du like
+  const handleLike = (commentId: string) => {
+    setComments((prevComments) =>
       updateCommentById(prevComments, commentId, (comment) => {
         const newLikes = comment.likedByCurrentUser ? comment.likes - 1 : comment.likes + 1;
         const newDislikes = comment.dislikedByCurrentUser ? comment.dislikes - 1 : comment.dislikes;
@@ -147,16 +166,17 @@ const Commantaires = () => {
         return {
           ...comment,
           likes: newLikes,
-          dislikes: newDislikes, // If previously disliked, remove dislike
+          dislikes: newDislikes,
           likedByCurrentUser: !comment.likedByCurrentUser,
-          dislikedByCurrentUser: false, // Ensure it's not disliked if liked
+          dislikedByCurrentUser: false,
         };
       })
     );
   };
 
-  const handleDislike = (commentId) => {
-    setComments(prevComments =>
+  // Gestion du dislike
+  const handleDislike = (commentId: string) => {
+    setComments((prevComments) =>
       updateCommentById(prevComments, commentId, (comment) => {
         const newDislikes = comment.dislikedByCurrentUser ? comment.dislikes - 1 : comment.dislikes + 1;
         const newLikes = comment.likedByCurrentUser ? comment.likes - 1 : comment.likes;
@@ -164,42 +184,34 @@ const Commantaires = () => {
         return {
           ...comment,
           dislikes: newDislikes,
-          likes: newLikes, // If previously liked, remove like
+          likes: newLikes,
           dislikedByCurrentUser: !comment.dislikedByCurrentUser,
-          likedByCurrentUser: false, // Ensure it's not liked if disliked
+          likedByCurrentUser: false,
         };
       })
     );
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg"> {/* Container for the whole comment section */}
+    <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg">
       <h2 className="text-xl font-semibold p-4 border-b">Commentaires</h2>
-      {/* Content area */}
-      <ScrollArea className="p-4 space-y-4"> {/* Fixed height for scroll area */}
+      <ScrollArea className="p-4 space-y-4" style={{ maxHeight: "400px" }}>
         {comments.map((comment) => (
           <CommentItem
             key={comment.id}
             comment={comment}
-            onReply={handleNewComment} // Pass handleNewComment as the reply handler
+            onReply={handleNewComment}
             onLike={handleLike}
             onDislike={handleDislike}
             currentUser={currentUser}
           />
         ))}
       </ScrollArea>
-
-      {/* Main Input area for new comments */}
       <div className="border-t p-4">
-        <CommentForm
-          placeholder="Ajouter un commentaire..."
-          onCommentSubmit={handleNewComment}
-        />
+        <CommentForm placeholder="Ajouter un commentaire..." onCommentSubmit={handleNewComment} parentCommentId={""} className={""} />
       </div>
     </div>
   );
 };
 
 export default Commantaires;
-
-  

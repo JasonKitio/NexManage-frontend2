@@ -1,26 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 // import Input from "@/components/Input";
 // import { Input } from '../ui/input';
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Employer } from "@/types/employer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -33,8 +22,6 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as RPNInput from "react-phone-number-input";
-import Link from "next/link";
-import { Google } from "@/icons/google";
 import { useApiMutation } from "@/hooks/apis/use-api";
 import { toast } from "sonner";
 import { employerSchema } from "@/schemas/employer/employer.schema";
@@ -42,7 +29,7 @@ import { FlagComponent } from "@/components/customs/flag-component";
 import { PhoneInput } from "@/components/customs/phone-input";
 import { CountrySelect } from "@/components/customs/country-selected";
 
-export default function EditEmployer({ employer }: { employer: Employer }) {
+export default function EditEmployer() {
   const [focusedField, setFocusedField] = useState<string>("");
   const form = useForm<employerSchema>({
     resolver: zodResolver(employerSchema),
@@ -55,8 +42,7 @@ export default function EditEmployer({ employer }: { employer: Employer }) {
 
   const {
     handleSubmit,
-    watch,
-    formState: { isSubmitting },
+    watch
   } = form;
   type preRegisterData = Pick<employerSchema, "nom" | "email" | "telephone">;
   // mutation pre-register
@@ -70,12 +56,12 @@ export default function EditEmployer({ employer }: { employer: Employer }) {
     },
     onError: (error) => {
       console.error("Erreur d'inscription:", error);
+      console.error("error : ", isError);
     },
   });
 
   const watchedUsername = watch("nom");
   const watchedEmail = watch("email");
-  const watchTelephone = watch("telephone");
 
   const shouldAnimateLabel = (fieldName: string, fieldValue: string) => {
     return focusedField === fieldName || fieldValue.length > 0;

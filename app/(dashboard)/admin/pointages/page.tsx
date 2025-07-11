@@ -1,26 +1,21 @@
 "use client";
 
-import Head from "next/head";
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { Search01Icon } from "hugeicons-react";
 import TableEmployes from "@/components/presence/list-employes";
 import { Contrat, Role, StatutContrat } from "@/types";
 import {
-  ChevronDown,
   ChevronDownCircle,
-  ChevronRight,
   ChevronRightCircle,
 } from "lucide-react";
 
-const bgAvatarColors = {
-  bgAvatarLB: "bg-[#FF5733]", // Example color for Loic Bryan
-  bgAvatarJD: "bg-[#e91e63]", // Example color for John Doe
-  bgAvatarLN: "bg-[#00bcd4]", // Example color for Lisa Nguyen
-  bgAvatarMM: "bg-[#ff9800]", // Example color for Mark Miller
-  bgAvatarAG: "bg-[#4caf50]", // Example color for Alice Green
-};
+// const bgAvatarColors = {
+//   bgAvatarLB: "bg-[#FF5733]", // Example color for Loic Bryan
+//   bgAvatarJD: "bg-[#e91e63]", // Example color for John Doe
+//   bgAvatarLN: "bg-[#00bcd4]", // Example color for Lisa Nguyen
+//   bgAvatarMM: "bg-[#ff9800]", // Example color for Mark Miller
+//   bgAvatarAG: "bg-[#4caf50]", // Example color for Alice Green
+// };
 
 const contrats: Contrat[] = [
   {
@@ -93,7 +88,7 @@ const contrats: Contrat[] = [
     taches: [],
     estGabarit: false,
     dateCreation: new Date("2025-06-25T00:00:00"),
-    statut: StatutContrat.TERMINEE,
+    statut: StatutContrat.TERMINE,
   },
 ];
 
@@ -160,7 +155,7 @@ export default function PointagePage() {
                   </span>
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <div className="flex flex-row items-center px-2 rounded-md border border-gray w-full focus-within:shadow-md focus-within:border-blue-500 transition-all duration-200">
                   <Search01Icon color="#e5e5e5" size={24} />
                   <input
@@ -170,7 +165,7 @@ export default function PointagePage() {
                     className="py-2 px-4 w-full outline-none"
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
             {/* Table Container */}
             <div className="overflow-x-auto mt-5 px-2 border rounded-xl">
