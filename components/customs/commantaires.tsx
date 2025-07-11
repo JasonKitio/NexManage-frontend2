@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
-import { v4 as uuidv4 } from "uuid";
 
 // Type pour un commentaire (avec récursivité sur replies)
 interface CommentType {
@@ -21,6 +20,9 @@ interface CommentType {
   replies: CommentType[];
   parentId?: string | null;
 }
+
+// Fonction simple pour générer un ID pseudo-unique
+const generateId = (): string => Math.random().toString(36).substring(2, 9);
 
 // Données initiales (dummy)
 const initialComments: CommentType[] = [
@@ -130,7 +132,7 @@ const Commantaires: React.FC = () => {
   // Ajouter un nouveau commentaire ou une réponse
   const handleNewComment = (text: string, parentId: string | null = null) => {
     const newComment: CommentType = {
-      id: uuidv4(),
+      id: generateId(),
       author: currentUser.name,
       authorInitial: currentUser.initial,
       authorAvatarUrl: currentUser.avatarUrl,
